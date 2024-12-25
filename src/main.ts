@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
+import { GUI } from "dat.gui";
 
 const scene = new THREE.Scene();
 
@@ -31,11 +32,18 @@ scene.add(cube);
 const stats = new Stats();
 document.body.appendChild(stats.dom);
 
+const gui = new GUI();
+
+const cubeFolder = gui.addFolder("Cube");
+cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
+cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
+cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
+
+const cameraFolder = gui.addFolder("Camera");
+cameraFolder.add(camera.position, "z", 0, 20);
+
 function animate() {
   requestAnimationFrame(animate);
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
 
   renderer.render(scene, camera);
 
