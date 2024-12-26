@@ -1,46 +1,56 @@
 import "./style.css";
-import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
-import { GUI } from "dat.gui";
+import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
+import { getSun } from "./assets/celestial/sun";
+import { getCamera } from "./assets/basic/camera";
+import { getOrbitControl } from "./assets/basic/orbitControl";
+import { getRenderer } from "./assets/basic/renderer";
+import { getScene } from "./assets/basic/scene";
+import { getMercury } from "./assets/celestial/mercury";
+import { getJupiter } from "./assets/celestial/jupiter";
+import { getNeptune } from "./assets/celestial/neptune";
 
-const scene = new THREE.Scene();
+// init scene
+const scene = getScene();
 
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.z = 1.5;
+// init gui
+new GUI();
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+// init camera
+const camera = getCamera();
 
+// init renderer
+const renderer = getRenderer();
+
+// browser resize handle
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial({ wireframe: true });
+// init orbit control
+getOrbitControl(camera, renderer, scene);
 
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
+// init stats
 const stats = new Stats();
 document.body.appendChild(stats.dom);
 
-const gui = new GUI();
+// init objects
+const sun = getSun();
+scene.add(sun.object);
 
-const cubeFolder = gui.addFolder("Cube");
-cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
+const mercury = getMercury();
+scene.add(mercury.orbit);
+scene.add(mercury.object);
 
-const cameraFolder = gui.addFolder("Camera");
-cameraFolder.add(camera.position, "z", 0, 20);
+const jupiter = getJupiter();
+scene.add(jupiter.orbit);
+scene.add(jupiter.object);
+
+const neptune = getNeptune();
+scene.add(neptune.orbit);
+scene.add(neptune.object);
 
 function animate() {
   requestAnimationFrame(animate);
