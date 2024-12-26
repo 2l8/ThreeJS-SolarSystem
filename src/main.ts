@@ -1,20 +1,18 @@
 import "./style.css";
 import Stats from "three/addons/libs/stats.module.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { getSun } from "./assets/celestial/sun";
 import { getCamera } from "./assets/basic/camera";
 import { getOrbitControl } from "./assets/basic/orbitControl";
 import { getRenderer } from "./assets/basic/renderer";
 import { getScene } from "./assets/basic/scene";
-import { getMercury } from "./assets/celestial/mercury";
-import { getJupiter } from "./assets/celestial/jupiter";
-import { getNeptune } from "./assets/celestial/neptune";
+import { CelestialObjectsData } from "./assets/celestial/celestialObjectsData";
+import { renderCelestial } from "./assets/celestial/renderCelestial";
 
 // init scene
 const scene = getScene();
 
 // init gui
-new GUI();
+const gui = new GUI();
 
 // init camera
 const camera = getCamera();
@@ -37,20 +35,7 @@ const stats = new Stats();
 document.body.appendChild(stats.dom);
 
 // init objects
-const sun = getSun();
-scene.add(sun.object);
-
-const mercury = getMercury();
-scene.add(mercury.orbit);
-scene.add(mercury.object);
-
-const jupiter = getJupiter();
-scene.add(jupiter.orbit);
-scene.add(jupiter.object);
-
-const neptune = getNeptune();
-scene.add(neptune.orbit);
-scene.add(neptune.object);
+CelestialObjectsData.forEach((obj) => renderCelestial(obj, scene, gui));
 
 function animate() {
   requestAnimationFrame(animate);
