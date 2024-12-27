@@ -1,12 +1,17 @@
 import "./style.css";
 import Stats from "three/addons/libs/stats.module.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { getCamera } from "./assets/basic/camera";
-import { getOrbitControl } from "./assets/basic/orbitControl";
-import { getRenderer } from "./assets/basic/renderer";
-import { getScene } from "./assets/basic/scene";
-import { CelestialObjectsData } from "./assets/celestial/celestialObjectsData";
-import { renderCelestial } from "./assets/celestial/renderCelestial";
+import { getCamera } from "./features/camera/camera";
+import { getOrbitControl } from "./features/camera/orbitControl";
+import { getRenderer } from "./features/camera/renderer";
+import { getScene } from "./features/camera/scene";
+import { CelestialObjectsData } from "./features/celestial/celestialObjectsData";
+import { initialCameraState } from "./features/camera/cameraState";
+import { Celestial } from "./features/celestial/celestial";
+import { addCustomSelectControl } from "./features/gui/helpers";
+import { getCelestialByName } from "./features/celestial/helpers";
+
+const state = { camera: { ...initialCameraState } };
 
 // init scene
 const scene = getScene();
@@ -28,14 +33,37 @@ window.addEventListener("resize", () => {
 });
 
 // init orbit control
-getOrbitControl(camera, renderer, scene);
+const orbitControl = getOrbitControl(camera, renderer, scene);
 
 // init stats
 const stats = new Stats();
 document.body.appendChild(stats.dom);
 
 // init objects
-CelestialObjectsData.forEach((obj) => renderCelestial(obj, scene, gui));
+const objectsFolder = gui.addFolder("Celestial objects");
+objectsFolder.close();
+
+const celestials = CelestialObjectsData.map((obj) => {
+  const celestial = new Celestial(obj, scene, objectsFolder);
+  celestial.render();
+  return celestial;
+});
+
+addCustomSelectControl(
+  gui,
+  state.camera,
+  "center",
+  "Center around",
+  CelestialObjectsData.map((obj) => obj.name),
+  (value) => {
+    const selectedCelestial = getCelestialByName(celestials, value);
+    if (selectedCelestial) {
+      const position = selectedCelestial.getPosition();
+      orbitControl.target.set(position.x, position.y, position.z);
+      orbitControl.update();
+    }
+  }
+);
 
 function animate() {
   requestAnimationFrame(animate);
