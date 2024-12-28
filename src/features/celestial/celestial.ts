@@ -183,26 +183,25 @@ export class Celestial implements ICelestial {
     );
   }
 
-  public readonly render = () => {
+  public readonly render = async () => {
     const texturePromise = this.celestialData.sphere.map
       ? this.textureLoader.loadAsync(this.celestialData.sphere.map)
       : Promise.resolve(undefined);
 
-    texturePromise.then((texture) => {
-      if (texture) {
-        texture.colorSpace = SRGBColorSpace;
-        this.sphere.material.map = texture;
-      }
+    const texture = await texturePromise;
+    if (texture) {
+      texture.colorSpace = SRGBColorSpace;
+      this.sphere.material.map = texture;
+    }
 
-      this.guiGroup.add(this.sphere, "visible").name("Sphere visible");
-      this.scene.add(this.sphere);
+    this.guiGroup.add(this.sphere, "visible").name("Sphere visible");
+    this.scene.add(this.sphere);
 
-      if (!this.orbit) {
-        return;
-      }
-      this.guiGroup.add(this.orbit, "visible").name("Orbit visible");
-      this.scene.add(this.orbit);
-    });
+    if (!this.orbit) {
+      return;
+    }
+    this.guiGroup.add(this.orbit, "visible").name("Orbit visible");
+    this.scene.add(this.orbit);
   };
 
   public readonly getPosition = () => {
