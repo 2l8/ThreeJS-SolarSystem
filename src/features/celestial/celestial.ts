@@ -1,14 +1,18 @@
 import {
   BufferGeometry,
   EllipseCurve,
+  ImageUtils,
   Line,
   LineBasicMaterial,
   Mesh,
-  MeshNormalMaterial,
+  MeshStandardMaterial,
   NormalBufferAttributes,
   Object3DEventMap,
   Scene,
   SphereGeometry,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
   Vector3,
 } from "three";
 import { OrbitColor, OrbitSizeCoefficient } from "../../utils/constants";
@@ -17,10 +21,11 @@ import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { IEventManager } from "../../utils/eventsManager";
 import { normInclination, phaseToTime } from "./helpers";
 import { IGuiState } from "../gui/guiState";
+import { positionGeometry } from "three/tsl";
 
 export interface ICelestial {
   celestialData: ICelestialData;
-  sphere: Mesh<SphereGeometry, MeshNormalMaterial, Object3DEventMap>;
+  sphere: Mesh<SphereGeometry, MeshStandardMaterial, Object3DEventMap>;
   orbit?: Line<
     BufferGeometry<NormalBufferAttributes>,
     LineBasicMaterial,
@@ -42,7 +47,7 @@ export class Celestial implements ICelestial {
   public readonly guiGroup: GUI;
   public readonly sphere: Mesh<
     SphereGeometry,
-    MeshNormalMaterial,
+    MeshStandardMaterial,
     Object3DEventMap
   >;
   public readonly orbit:
@@ -69,7 +74,7 @@ export class Celestial implements ICelestial {
       false,
       0
     );
-    const points = curve.getPoints(500);
+    const points = curve.getPoints(256);
     const orbitGeometry = new BufferGeometry().setFromPoints(points);
     const orbitMaterial = new LineBasicMaterial({ color: OrbitColor });
     const orbit = new Line(orbitGeometry, orbitMaterial);
@@ -77,6 +82,21 @@ export class Celestial implements ICelestial {
     orbit.rotation.x = Math.PI / 2 - inclination;
 
     return orbit;
+  };
+
+  private readonly getSphere = (
+    radius: number,
+    orbitXDiameter: number,
+    shift: number
+  ) => {
+    const sphereGeometry = new SphereGeometry(radius, 1024);
+    const sphereMaterial = new MeshStandardMaterial({
+      flatShading: true,
+    });
+    const sphere = new Mesh(sphereGeometry, sphereMaterial);
+    sphere.position.x = orbitXDiameter + shift;
+
+    return sphere;
   };
 
   private readonly updatePosition = (shift: number) => {
@@ -115,7 +135,8 @@ export class Celestial implements ICelestial {
     private scene: Scene,
     private gui: GUI,
     private eventsManager: IEventManager,
-    private state: IGuiState
+    private state: IGuiState,
+    private textureLoader: TextureLoader
   ) {
     const radius = this.celestialData.sphere.radius;
     this.orbitXDiameter = this.celestialData.orbit
@@ -162,28 +183,26 @@ export class Celestial implements ICelestial {
     );
   }
 
-  private readonly getSphere = (
-    radius: number,
-    orbitXDiameter: number,
-    shift: number
-  ) => {
-    const sphereGeometry = new SphereGeometry(radius);
-    const sphereMaterial = new MeshNormalMaterial({ wireframe: true });
-    const sphere = new Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.x = orbitXDiameter + shift;
-
-    return sphere;
-  };
-
   public readonly render = () => {
-    this.guiGroup.add(this.sphere, "visible").name("Sphere visible");
-    this.scene.add(this.sphere);
+    const texturePromise = this.celestialData.sphere.map
+      ? this.textureLoader.loadAsync(this.celestialData.sphere.map)
+      : Promise.resolve(undefined);
 
-    if (!this.orbit) {
-      return;
-    }
-    this.guiGroup.add(this.orbit, "visible").name("Orbit visible");
-    this.scene.add(this.orbit);
+    texturePromise.then((texture) => {
+      if (texture) {
+        texture.colorSpace = SRGBColorSpace;
+        this.sphere.material.map = texture;
+      }
+
+      this.guiGroup.add(this.sphere, "visible").name("Sphere visible");
+      this.scene.add(this.sphere);
+
+      if (!this.orbit) {
+        return;
+      }
+      this.guiGroup.add(this.orbit, "visible").name("Orbit visible");
+      this.scene.add(this.orbit);
+    });
   };
 
   public readonly getPosition = () => {

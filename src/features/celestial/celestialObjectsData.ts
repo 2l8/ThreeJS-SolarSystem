@@ -5,6 +5,7 @@ import {
 
 export interface ISphereData {
   radius: number;
+  map?: string;
 }
 
 export interface IOrbitData {
@@ -32,13 +33,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Mercury",
-    sphere: { radius: 2439 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 2439 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/mercury.jpg",
+    },
     orbit: {
-      perihelion: 46001009,
-      aphelion: 69817445,
-      semimajor: 57909227,
+      perihelion: 46001,
+      aphelion: 69817,
+      semimajor: 57909,
       eccentricity: 0.20563593,
-      semiminor: 56671623,
+      semiminor: 56671,
       inclination: 3.38,
       yearPeriod: 2111,
       dayPeriod: 1416,
@@ -47,13 +51,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Venus",
-    sphere: { radius: 6052 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 6052 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/venus.jpg",
+    },
     orbit: {
-      perihelion: 107476259,
-      aphelion: 108942109,
-      semimajor: 108208930,
+      perihelion: 107476,
+      aphelion: 108942,
+      semimajor: 108208,
       eccentricity: 0.0068,
-      semiminor: 108206428,
+      semiminor: 108206,
       inclination: 3.86,
       yearPeriod: 5392.8,
       dayPeriod: 5832,
@@ -62,13 +69,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Earth",
-    sphere: { radius: 6371 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 6371 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/earth.jpg",
+    },
     orbit: {
-      perihelion: 147098290,
-      aphelion: 152098232,
-      semimajor: 149598261,
+      perihelion: 147098,
+      aphelion: 152098,
+      semimajor: 149598,
       eccentricity: 0.01671123,
-      semiminor: 149577370,
+      semiminor: 149577,
       inclination: 7.155,
       yearPeriod: 8766.1,
       dayPeriod: 24,
@@ -77,13 +87,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Mars",
-    sphere: { radius: 3389 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 3389 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/mars.webp",
+    },
     orbit: {
-      perihelion: 206655000,
-      aphelion: 249232000,
-      semimajor: 227943820,
+      perihelion: 206655,
+      aphelion: 249232,
+      semimajor: 227943,
       eccentricity: 0.0933941,
-      semiminor: 226947527,
+      semiminor: 226947,
       inclination: 5.65,
       yearPeriod: 16488,
       dayPeriod: 24.5,
@@ -92,13 +105,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Jupiter",
-    sphere: { radius: 69911 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 69911 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/jupiter.jpg",
+    },
     orbit: {
-      perihelion: 740573600,
-      aphelion: 816520800,
-      semimajor: 778547200,
+      perihelion: 740573,
+      aphelion: 816520,
+      semimajor: 778547,
       eccentricity: 0.048775,
-      semiminor: 777620566,
+      semiminor: 777620,
       inclination: 6.09,
       yearPeriod: 103944,
       dayPeriod: 10,
@@ -107,13 +123,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Saturn",
-    sphere: { radius: 58232 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 58232 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/saturn.jpg",
+    },
     orbit: {
-      perihelion: 1353572956,
-      aphelion: 1513325783,
-      semimajor: 1429394069,
+      perihelion: 1353572,
+      aphelion: 1513325,
+      semimajor: 1429394,
       eccentricity: 0.055723219,
-      semiminor: 1427173154,
+      semiminor: 1427173,
       inclination: 5.51,
       yearPeriod: 257928,
       dayPeriod: 10.5,
@@ -122,13 +141,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Uranus",
-    sphere: { radius: 25362 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 25362 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/uranus.webp",
+    },
     orbit: {
-      perihelion: 2748938461,
-      aphelion: 3004419704,
-      semimajor: 2876679082,
+      perihelion: 2748938,
+      aphelion: 3004419,
+      semimajor: 2876679,
       eccentricity: 0.044405586,
-      semiminor: 2873841483,
+      semiminor: 2873841,
       inclination: 6.48,
       yearPeriod: 734136,
       dayPeriod: 17,
@@ -137,13 +159,16 @@ export const CelestialObjectsData: ICelestialData[] = [
   },
   {
     name: "Neptune",
-    sphere: { radius: 24622 * PlanetSizeCoefficient },
+    sphere: {
+      radius: 24622 * PlanetSizeCoefficient,
+      map: "../src/features/celestial/assets/neptune.jpg",
+    },
     orbit: {
-      perihelion: 4452940833,
-      aphelion: 4553946490,
-      semimajor: 4503443661,
+      perihelion: 4452940,
+      aphelion: 4553946,
+      semimajor: 4503443,
       eccentricity: 0.011214269,
-      semiminor: 4503160475,
+      semiminor: 4503160,
       inclination: 6.43,
       yearPeriod: 1435200,
       dayPeriod: 16,

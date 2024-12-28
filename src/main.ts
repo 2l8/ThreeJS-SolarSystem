@@ -13,6 +13,13 @@ import { getCelestialByName } from "./features/celestial/helpers";
 import { EventManager } from "./utils/eventsManager";
 import { getClock } from "./features/rendering/clock";
 import { initialGuiState } from "./features/gui/guiState";
+import { getLight } from "./features/rendering/light";
+import { TextureLoader } from "three";
+
+import {
+  InitialLightIntensity,
+  LightIntensityCoefficient,
+} from "./utils/constants";
 
 const state = {
   camera: { ...initialCameraState },
@@ -37,12 +44,19 @@ const camera = getCamera();
 // init renderer
 const renderer = getRenderer();
 
+// init texture loader
+const textureLoader = new TextureLoader();
+
 // browser resize handle
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// init light
+const light = getLight();
+scene.add(light);
 
 // init orbit control
 const orbitControl = getOrbitControl(camera, renderer, scene);
@@ -61,7 +75,8 @@ const celestials = CelestialObjectsData.map((obj) => {
     scene,
     objectsFolder,
     eventsManager,
-    state.gui
+    state.gui,
+    textureLoader
   );
   celestial.render();
   celestial.startAnimation();
@@ -83,6 +98,12 @@ addCustomSelectControl(
       const gap = selectedCelestial.celestialData.sphere.radius + 1;
       camera.position.set(position.x + gap, position.y + gap, position.z + gap);
       orbitControl.update();
+
+      light.intensity = selectedCelestial.celestialData.orbit
+        ? selectedCelestial.celestialData.orbit.semiminor *
+          Math.log10(selectedCelestial.celestialData.orbit.semiminor) *
+          LightIntensityCoefficient
+        : InitialLightIntensity;
     }
   }
 );
@@ -93,7 +114,6 @@ function animate() {
   requestAnimationFrame(animate);
 
   renderer.render(scene, camera);
-
   stats.update();
 }
 

@@ -4,6 +4,6 @@ export interface IGuiState {
 }
 
 export const initialGuiState: IGuiState = {
-  orbitSpeedMultiplier: 250,
+  orbitSpeedMultiplier: 0,
   axleSpeedMultiplier: 1,
 };
