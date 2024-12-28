@@ -14,8 +14,9 @@ import {
 import { OrbitColor, OrbitSizeCoefficient } from "../../utils/constants";
 import { ICelestialData } from "./celestialObjectsData";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { castInclination } from "../../utils/helpers";
 import { IEventManager } from "../../utils/eventsManager";
+import { normInclination, phaseToTime } from "./helpers";
+import { IGuiState } from "../gui/guiState";
 
 export interface ICelestial {
   celestialData: ICelestialData;
@@ -82,24 +83,25 @@ export class Celestial implements ICelestial {
     }
 
     this.timePassed += shift;
+    const orbitNormalizedTime =
+      this.timePassed * this.state.orbitSpeedMultiplier;
+
     const x =
-      this.orbitXDiameter *
-        Math.cos(this.speed * this.state.speedMultiplier * this.timePassed) +
+      this.orbitXDiameter * Math.cos(this.speed * orbitNormalizedTime) +
       this.xShift;
     const y =
       this.orbitYDiameter *
-      Math.sin(this.speed * this.state.speedMultiplier * this.timePassed) *
+      Math.sin(this.speed * orbitNormalizedTime) *
       Math.sin(this.castedInclination);
     const z =
       this.orbitYDiameter *
-      Math.sin(this.speed * this.state.speedMultiplier * this.timePassed) *
+      Math.sin(this.speed * orbitNormalizedTime) *
       Math.cos(this.castedInclination);
 
     this.sphere.position.set(x, y, z);
 
-    if (this.celestialData.name === "Earth") {
-      console.log(this.sphere.position);
-    }
+    const axleNormalizedTime = this.timePassed * this.state.axleSpeedMultiplier;
+    this.sphere.rotateY(axleNormalizedTime);
   };
 
   constructor(
@@ -107,7 +109,7 @@ export class Celestial implements ICelestial {
     private scene: Scene,
     private gui: GUI,
     private eventsManager: IEventManager,
-    private state: { speedMultiplier: number }
+    private state: IGuiState
   ) {
     const radius = this.celestialData.sphere.radius;
     this.orbitXDiameter = this.celestialData.orbit
@@ -122,11 +124,17 @@ export class Celestial implements ICelestial {
         OrbitSizeCoefficient
       : 0;
     this.speed = this.celestialData.orbit
-      ? (2 * Math.PI) / this.celestialData.orbit.siderealPeriod
+      ? (2 * Math.PI) / this.celestialData.orbit.yearPeriod
       : 0;
 
     this.castedInclination = this.celestialData.orbit
-      ? castInclination(this.celestialData.orbit?.inclination)
+      ? normInclination(this.celestialData.orbit?.inclination)
+      : 0;
+    this.timePassed = this.celestialData.orbit
+      ? phaseToTime(
+          this.celestialData.orbit.initialPhase,
+          this.celestialData.orbit.yearPeriod
+        )
       : 0;
 
     this.guiGroup = this.gui.addFolder(this.celestialData.name);

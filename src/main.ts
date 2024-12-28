@@ -87,8 +87,6 @@ addCustomSelectControl(
   }
 );
 
-gui.add(state.gui, "speedMultiplier").name("Speed multiplier");
-
 function animate() {
   eventsManager.fireEvent("tick", clock.getDelta());
 
