@@ -14,6 +14,8 @@ export interface IOrbitData {
   perihelion: number;
   aphelion: number;
   inclination: number;
+  siderealPeriod: number;
+  initialPhase: number;
 }
 
 export interface ICelestialData {
@@ -37,6 +39,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.20563593,
       semiminor: 56671623,
       inclination: 3.38,
+      siderealPeriod: 2111,
+      initialPhase: 0,
     },
   },
   {
@@ -49,6 +53,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.0068,
       semiminor: 108206428,
       inclination: 3.86,
+      siderealPeriod: 5392.8,
+      initialPhase: 0,
     },
   },
   {
@@ -61,6 +67,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.01671123,
       semiminor: 149577370,
       inclination: 7.155,
+      siderealPeriod: 8766.1,
+      initialPhase: 0,
     },
   },
   {
@@ -73,6 +81,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.0933941,
       semiminor: 226947527,
       inclination: 5.65,
+      siderealPeriod: 16488,
+      initialPhase: 0,
     },
   },
   {
@@ -85,6 +95,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.048775,
       semiminor: 777620566,
       inclination: 6.09,
+      siderealPeriod: 103944,
+      initialPhase: 0,
     },
   },
   {
@@ -97,6 +109,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.055723219,
       semiminor: 1427173154,
       inclination: 5.51,
+      siderealPeriod: 257928,
+      initialPhase: 0,
     },
   },
   {
@@ -109,6 +123,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.044405586,
       semiminor: 2873841483,
       inclination: 6.48,
+      siderealPeriod: 734136,
+      initialPhase: 0,
     },
   },
   {
@@ -121,6 +137,8 @@ export const CelestialObjectsData: ICelestialData[] = [
       eccentricity: 0.011214269,
       semiminor: 4503160475,
       inclination: 6.43,
+      siderealPeriod: 1435200,
+      initialPhase: 0,
     },
   },
 ];

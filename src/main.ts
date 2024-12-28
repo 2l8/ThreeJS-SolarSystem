@@ -3,21 +3,33 @@ import Stats from "three/addons/libs/stats.module.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { getCamera } from "./features/camera/camera";
 import { getOrbitControl } from "./features/camera/orbitControl";
-import { getRenderer } from "./features/camera/renderer";
-import { getScene } from "./features/camera/scene";
+import { getRenderer } from "./features/rendering/renderer";
+import { getScene } from "./features/rendering/scene";
 import { CelestialObjectsData } from "./features/celestial/celestialObjectsData";
 import { initialCameraState } from "./features/camera/cameraState";
 import { Celestial } from "./features/celestial/celestial";
 import { addCustomSelectControl } from "./features/gui/helpers";
 import { getCelestialByName } from "./features/celestial/helpers";
+import { EventManager } from "./utils/eventsManager";
+import { getClock } from "./features/rendering/clock";
+import { initialGuiState } from "./features/gui/guiState";
 
-const state = { camera: { ...initialCameraState } };
+const state = {
+  camera: { ...initialCameraState },
+  gui: { ...initialGuiState },
+};
+
+// init events manager
+const eventsManager = new EventManager();
 
 // init scene
 const scene = getScene();
 
 // init gui
 const gui = new GUI();
+
+// init clock
+const clock = getClock();
 
 // init camera
 const camera = getCamera();
@@ -44,8 +56,15 @@ const objectsFolder = gui.addFolder("Celestial objects");
 objectsFolder.close();
 
 const celestials = CelestialObjectsData.map((obj) => {
-  const celestial = new Celestial(obj, scene, objectsFolder);
+  const celestial = new Celestial(
+    obj,
+    scene,
+    objectsFolder,
+    eventsManager,
+    state.gui
+  );
   celestial.render();
+  celestial.startAnimation();
   return celestial;
 });
 
@@ -68,7 +87,11 @@ addCustomSelectControl(
   }
 );
 
+gui.add(state.gui, "speedMultiplier").name("Speed multiplier");
+
 function animate() {
+  eventsManager.fireEvent("tick", clock.getDelta());
+
   requestAnimationFrame(animate);
 
   renderer.render(scene, camera);
