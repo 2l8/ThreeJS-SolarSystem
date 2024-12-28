@@ -31,7 +31,9 @@ export interface ICelestial {
 
 export class Celestial implements ICelestial {
   private timePassed: number = 0;
+  private readonly initialPhase: number = 0;
   private readonly speed: number;
+  private readonly rotationSpeed: number;
   private readonly orbitXDiameter: number;
   private readonly orbitYDiameter: number;
   private readonly xShift: number;
@@ -84,7 +86,7 @@ export class Celestial implements ICelestial {
 
     this.timePassed += shift;
     const orbitNormalizedTime =
-      this.timePassed * this.state.orbitSpeedMultiplier;
+      (this.timePassed + this.initialPhase) * this.state.orbitSpeedMultiplier;
 
     const x =
       this.orbitXDiameter * Math.cos(this.speed * orbitNormalizedTime) +
@@ -101,7 +103,11 @@ export class Celestial implements ICelestial {
     this.sphere.position.set(x, y, z);
 
     const axleNormalizedTime = this.timePassed * this.state.axleSpeedMultiplier;
-    this.sphere.rotateY(axleNormalizedTime);
+    this.sphere.rotation.set(
+      this.sphere.rotation.x,
+      axleNormalizedTime * this.rotationSpeed,
+      this.sphere.rotation.z
+    );
   };
 
   constructor(
@@ -126,11 +132,14 @@ export class Celestial implements ICelestial {
     this.speed = this.celestialData.orbit
       ? (2 * Math.PI) / this.celestialData.orbit.yearPeriod
       : 0;
+    this.rotationSpeed = this.celestialData.orbit
+      ? (2 * Math.PI) / this.celestialData.orbit.dayPeriod
+      : 0;
 
     this.castedInclination = this.celestialData.orbit
       ? normInclination(this.celestialData.orbit?.inclination)
       : 0;
-    this.timePassed = this.celestialData.orbit
+    this.initialPhase = this.celestialData.orbit
       ? phaseToTime(
           this.celestialData.orbit.initialPhase,
           this.celestialData.orbit.yearPeriod
