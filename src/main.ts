@@ -60,6 +60,9 @@ addCustomSelectControl(
     if (selectedCelestial) {
       const position = selectedCelestial.getPosition();
       orbitControl.target.set(position.x, position.y, position.z);
+
+      const gap = selectedCelestial.celestialData.sphere.radius + 1;
+      camera.position.set(position.x + gap, position.y + gap, position.z + gap);
       orbitControl.update();
     }
   }
